@@ -1,37 +1,69 @@
 import React, { useEffect, useRef, useState } from "react";
+import {
+  ArrowUp,
+  Home,
+  Inbox,
+  Mail,
+  Table2,
+  Settings,
+  MoreHorizontal,
+  Paperclip,
+  Sparkles,
+  ChevronDown,
+  Wifi,
+  KeyRound,
+  MonitorCog,
+} from "lucide-react";
 
-// Chat widget talks to the chat-service via same-origin /api (proxied in dev
-// by vite.config.js, and by the Ingress path rule in production).
 const API_ENDPOINT = "/api/chat";
 
 function makeSessionId() {
   return "sess_" + Math.random().toString(36).slice(2) + Date.now().toString(36);
 }
 
-const WELCOME = {
-  role: "assistant",
-  content:
-    "Hi, I'm the IT Helpdesk assistant. Tell me what's going on — VPN, email, password, printer, hardware, anything — and I'll help you sort it out.",
-};
+const SUGGESTIONS = [
+  {
+    icon: Wifi,
+    tint: "tint-blue",
+    title: "Network Issue",
+    subtitle: "Help me fix VPN or Wi-Fi problems",
+    prompt: "I'm having trouble connecting — my VPN keeps dropping.",
+  },
+  {
+    icon: KeyRound,
+    tint: "tint-rose",
+    title: "Account Access",
+    subtitle: "Reset a password or unlock my account",
+    prompt: "I'm locked out of my account and need to reset my password.",
+  },
+  {
+    icon: MonitorCog,
+    tint: "tint-green",
+    title: "Hardware Request",
+    subtitle: "Request new equipment or a repair",
+    prompt: "I need to request a repair or replacement for my laptop.",
+  },
+];
 
-export default function ChatWidget() {
+export default function HelpdeskApp() {
   const [sessionId] = useState(makeSessionId);
-  const [messages, setMessages] = useState([WELCOME]);
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [status, setStatus] = useState("ready"); // ready | sending | error
   const [errorMsg, setErrorMsg] = useState("");
-  const scrollRef = useRef(null);
+  const logRef = useRef(null);
+
+  const started = messages.length > 0;
 
   useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
+    logRef.current?.scrollTo({ top: logRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, status]);
 
-  async function sendMessage(e) {
-    e.preventDefault();
-    const text = input.trim();
-    if (!text || status === "sending") return;
+  async function send(text) {
+    const trimmed = text.trim();
+    if (!trimmed || status === "sending") return;
 
-    setMessages((m) => [...m, { role: "user", content: text }]);
+    setMessages((m) => [...m, { role: "user", content: trimmed }]);
     setInput("");
     setStatus("sending");
     setErrorMsg("");
@@ -40,7 +72,7 @@ export default function ChatWidget() {
       const res = await fetch(API_ENDPOINT, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ session_id: sessionId, message: text }),
+        body: JSON.stringify({ session_id: sessionId, message: trimmed }),
       });
 
       if (!res.ok) {
@@ -57,52 +89,129 @@ export default function ChatWidget() {
     }
   }
 
+  function handleSubmit(e) {
+    e.preventDefault();
+    send(input);
+  }
+
   return (
-    <div className="widget">
-      <header className="widget__header">
-        <div className="widget__title">
-          <span className={`dot dot--${status === "error" ? "error" : "live"}`} />
-          IT Helpdesk Assistant
+    <div className="app">
+      <aside className="sidebar">
+        <div className="sidebar__logo">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M7 17L17 7M17 7H9M17 7V15" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
         </div>
-        <div className="widget__session">session {sessionId.slice(0, 14)}</div>
-      </header>
+        <nav className="sidebar__nav">
+          <button className="sidebar__icon sidebar__icon--active" aria-label="Home">
+            <Home size={18} />
+          </button>
+          <button className="sidebar__icon" aria-label="Tickets">
+            <Inbox size={18} />
+          </button>
+          <button className="sidebar__icon" aria-label="Messages">
+            <Mail size={18} />
+          </button>
+          <button className="sidebar__icon" aria-label="Knowledge base">
+            <Table2 size={18} />
+          </button>
+        </nav>
+        <div className="sidebar__bottom">
+          <button className="sidebar__icon" aria-label="Settings">
+            <Settings size={18} />
+          </button>
+          <button className="sidebar__icon" aria-label="More">
+            <MoreHorizontal size={18} />
+          </button>
+        </div>
+      </aside>
 
-      <div className="widget__log" ref={scrollRef}>
-        {messages.map((m, i) => (
-          <div key={i} className={`bubble bubble--${m.role}`}>
-            <div className="bubble__label">{m.role === "user" ? "You" : "Assistant"}</div>
-            <div className="bubble__text">{m.content}</div>
-          </div>
-        ))}
+      <main className="main">
+        <header className="topbar">
+          <div className="topbar__spacer" />
+          <button className="topbar__profile">
+            <span className="topbar__avatar" aria-hidden="true" />
+            <span className="topbar__name">IT Helpdesk</span>
+            <ChevronDown size={14} />
+          </button>
+        </header>
 
-        {status === "sending" && (
-          <div className="bubble bubble--assistant bubble--pending">
-            <div className="bubble__label">Assistant</div>
-            <div className="bubble__text typing">
-              <span /><span /><span />
+        {!started ? (
+          <div className="hero">
+            <div className="hero__orb" aria-hidden="true">
+              <div className="hero__orb-glow" />
+              <div className="hero__grid" />
+            </div>
+
+            <div className="hero__copy">
+              <h1>
+                Hey there <span className="hero__accent">👋</span>
+              </h1>
+              <h1>What can I help with?</h1>
+            </div>
+
+            <div className="suggestions">
+              {SUGGESTIONS.map(({ icon: Icon, tint, title, subtitle, prompt }) => (
+                <button
+                  key={title}
+                  className={`suggestion ${tint}`}
+                  onClick={() => send(prompt)}
+                >
+                  <span className="suggestion__badge">
+                    <Icon size={13} />
+                    {title}
+                  </span>
+                  <span className="suggestion__subtitle">{subtitle}</span>
+                </button>
+              ))}
             </div>
           </div>
-        )}
+        ) : (
+          <div className="log" ref={logRef}>
+            {messages.map((m, i) => (
+              <div key={i} className={`bubble bubble--${m.role}`}>
+                <div className="bubble__label">{m.role === "user" ? "You" : "IT Helpdesk"}</div>
+                <div className="bubble__text">{m.content}</div>
+              </div>
+            ))}
 
-        {status === "error" && (
-          <div className="widget__error">
-            Couldn't reach the assistant: {errorMsg}
+            {status === "sending" && (
+              <div className="bubble bubble--assistant bubble--pending">
+                <div className="bubble__label">IT Helpdesk</div>
+                <div className="bubble__text typing">
+                  <span />
+                  <span />
+                  <span />
+                </div>
+              </div>
+            )}
+
+            {status === "error" && (
+              <div className="log__error">Couldn't reach the assistant: {errorMsg}</div>
+            )}
           </div>
         )}
-      </div>
 
-      <form className="widget__composer" onSubmit={sendMessage}>
-        <input
-          type="text"
-          placeholder="Describe your IT issue…"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          disabled={status === "sending"}
-        />
-        <button type="submit" disabled={status === "sending" || !input.trim()}>
-          Send
-        </button>
-      </form>
+        <form className="composer" onSubmit={handleSubmit}>
+          <div className="composer__icon">
+            <Sparkles size={14} />
+          </div>
+          <input
+            type="text"
+            placeholder="Ask me anything......."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            disabled={status === "sending"}
+          />
+          <button type="button" className="composer__attach">
+            <Paperclip size={13} />
+            Attach file
+          </button>
+          <button type="submit" className="composer__send" disabled={status === "sending" || !input.trim()}>
+            <ArrowUp size={16} />
+          </button>
+        </form>
+      </main>
     </div>
   );
 }
