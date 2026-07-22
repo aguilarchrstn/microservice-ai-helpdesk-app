@@ -12,7 +12,7 @@ import {
   ChevronDown,
   Wifi,
   KeyRound,
-  MonitorCog,
+  Laptop,
 } from "lucide-react";
 
 const API_ENDPOINT = "/api/chat";
@@ -37,7 +37,7 @@ const SUGGESTIONS = [
     prompt: "I'm locked out of my account and need to reset my password.",
   },
   {
-    icon: MonitorCog,
+    icon: Laptop,
     tint: "tint-green",
     title: "Hardware Request",
     subtitle: "Request new equipment or a repair",
