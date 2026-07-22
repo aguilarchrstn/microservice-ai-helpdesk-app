@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
   ArrowUp,
+  ArrowRight,
   Home,
   Inbox,
   Mail,
@@ -46,6 +47,7 @@ const SUGGESTIONS = [
 ];
 
 export default function HelpdeskApp() {
+  const [entered, setEntered] = useState(false);
   const [sessionId] = useState(makeSessionId);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -92,6 +94,32 @@ export default function HelpdeskApp() {
   function handleSubmit(e) {
     e.preventDefault();
     send(input);
+  }
+
+  if (!entered) {
+    return (
+      <div className="app app--splash">
+        <div className="splash">
+          <div className="splash__orb" aria-hidden="true">
+            <div className="hero__orb-glow" />
+            <div className="hero__grid" />
+          </div>
+          <div className="splash__content">
+            <div className="splash__mark">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M7 17L17 7M17 7H9M17 7V15" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+            <h1>IT Helpdesk Assistant</h1>
+            <p>Fast answers for network, account, and hardware issues — any time, no ticket queue to wait in.</p>
+            <button className="splash__cta" onClick={() => setEntered(true)}>
+              Start chat
+              <ArrowRight size={16} />
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
