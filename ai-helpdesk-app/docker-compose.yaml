@@ -1,0 +1,17 @@
+services:
+  chat-service:
+    build: ./services/chat-service
+    ports:
+      - "8000:8000"
+    environment:
+      AI_API_KEY: ${AI_API_KEY}
+      AI_BASE_URL: ${AI_BASE_URL:-https://integrate.api.nvidia.com/v1}
+      AI_MODEL: ${AI_MODEL:-nvidia/nemotron-3-ultra-550b-a55b}
+      CORS_ORIGINS: "*"
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - chat-service
