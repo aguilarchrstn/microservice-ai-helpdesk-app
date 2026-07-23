@@ -20,11 +20,12 @@ import {
   ThumbsDown,
 } from "lucide-react";
 import { renderMessageContent } from "./MessageContent.jsx";
+import { copyText } from "./clipboard.js";
 
 // Bump this string whenever you ship a change, and check it in the browser
 // console (F12 → Console) after deploying to confirm the new build is
 // actually the one running — helps rule out stale Docker/browser caches.
-console.log("IT Helpdesk widget build: 2026-07-23-v2 (markdown + actions + mobile-fix)");
+console.log("IT Helpdesk widget build: 2026-07-23-v4 (headings + lists rendering)");
 
 const API_ENDPOINT = "/api/chat";
 
@@ -63,6 +64,7 @@ export default function HelpdeskApp() {
   const [input, setInput] = useState("");
   const [status, setStatus] = useState("ready"); // ready | sending | error
   const [copiedIndex, setCopiedIndex] = useState(null);
+  const [copyFailed, setCopyFailed] = useState(false);
   const [feedback, setFeedback] = useState({}); // { [messageIndex]: "up" | "down" }
   const [errorMsg, setErrorMsg] = useState("");
   const logRef = useRef(null);
@@ -104,12 +106,13 @@ export default function HelpdeskApp() {
   }
 
   async function handleCopyMessage(index, text) {
-    try {
-      await navigator.clipboard.writeText(text);
+    const ok = await copyText(text);
+    if (ok) {
       setCopiedIndex(index);
       setTimeout(() => setCopiedIndex((cur) => (cur === index ? null : cur)), 1500);
-    } catch {
-      // Clipboard API unavailable — fail quietly.
+    } else {
+      setCopyFailed(true);
+      setTimeout(() => setCopyFailed(false), 2500);
     }
   }
 
@@ -274,6 +277,12 @@ export default function HelpdeskApp() {
 
             {status === "error" && (
               <div className="log__error">Couldn't reach the assistant: {errorMsg}</div>
+            )}
+
+            {copyFailed && (
+              <div className="log__error">
+                Couldn't copy — your browser may be blocking clipboard access on this page.
+              </div>
             )}
           </div>
         )}

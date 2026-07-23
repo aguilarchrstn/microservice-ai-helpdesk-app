@@ -1,16 +1,15 @@
 import React, { useState } from "react";
 import { Copy, Check } from "lucide-react";
+import { copyText } from "./clipboard.js";
 
 function CodeBlock({ code, language }) {
   const [copied, setCopied] = useState(false);
 
   async function handleCopy() {
-    try {
-      await navigator.clipboard.writeText(code);
+    const ok = await copyText(code);
+    if (ok) {
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
-    } catch {
-      // Clipboard API unavailable (e.g. insecure context) — fail quietly.
     }
   }
 
@@ -59,12 +58,49 @@ function renderInline(text, keyPrefix) {
 
 function renderTextChunk(chunk, keyPrefix) {
   const lines = chunk.split("\n");
-  return lines.map((line, i) => (
-    <React.Fragment key={`${keyPrefix}-line-${i}`}>
-      {renderInline(line, `${keyPrefix}-${i}`)}
-      {i < lines.length - 1 && <br />}
-    </React.Fragment>
-  ));
+  const nodes = [];
+  let listBuffer = [];
+
+  function flushList() {
+    if (listBuffer.length > 0) {
+      nodes.push(<ul className="msg-list" key={`${keyPrefix}-list-${nodes.length}`}>{listBuffer}</ul>);
+      listBuffer = [];
+    }
+  }
+
+  lines.forEach((line, i) => {
+    const headingMatch = line.match(/^(#{1,4})\s+(.*)/);
+    const listMatch = line.match(/^[-*]\s+(.*)/);
+
+    if (headingMatch) {
+      flushList();
+      const level = headingMatch[1].length;
+      const Tag = level <= 2 ? "h3" : "h4";
+      nodes.push(
+        <Tag className="msg-heading" key={`${keyPrefix}-h-${i}`}>
+          {renderInline(headingMatch[2], `${keyPrefix}-h-${i}`)}
+        </Tag>
+      );
+    } else if (listMatch) {
+      listBuffer.push(
+        <li key={`${keyPrefix}-li-${i}`}>{renderInline(listMatch[1], `${keyPrefix}-li-${i}`)}</li>
+      );
+    } else {
+      flushList();
+      if (line.trim() === "") {
+        nodes.push(<div className="msg-spacer" key={`${keyPrefix}-sp-${i}`} />);
+      } else {
+        nodes.push(
+          <div className="msg-line" key={`${keyPrefix}-line-${i}`}>
+            {renderInline(line, `${keyPrefix}-${i}`)}
+          </div>
+        );
+      }
+    }
+  });
+
+  flushList();
+  return nodes;
 }
 
 const CODE_BLOCK_PATTERN = /```(\w*)\n?([\s\S]*?)```/g;
