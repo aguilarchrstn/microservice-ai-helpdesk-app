@@ -21,6 +21,11 @@ import {
 } from "lucide-react";
 import { renderMessageContent } from "./MessageContent.jsx";
 
+// Bump this string whenever you ship a change, and check it in the browser
+// console (F12 → Console) after deploying to confirm the new build is
+// actually the one running — helps rule out stale Docker/browser caches.
+console.log("IT Helpdesk widget build: 2026-07-23-v2 (markdown + actions + mobile-fix)");
+
 const API_ENDPOINT = "/api/chat";
 
 function makeSessionId() {
