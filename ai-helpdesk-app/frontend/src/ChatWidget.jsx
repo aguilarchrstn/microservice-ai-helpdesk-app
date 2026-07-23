@@ -25,7 +25,7 @@ import { copyText } from "./clipboard.js";
 // Bump this string whenever you ship a change, and check it in the browser
 // console (F12 → Console) after deploying to confirm the new build is
 // actually the one running — helps rule out stale Docker/browser caches.
-console.log("IT Helpdesk widget build: 2026-07-23-v4 (headings + lists rendering)");
+console.log("IT Helpdesk widget build: 2026-07-23-v5 (Tyrian purple theme)");
 
 const API_ENDPOINT = "/api/chat";
 

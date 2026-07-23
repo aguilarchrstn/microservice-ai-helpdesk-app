@@ -26,7 +26,6 @@ Formatting:
   terminal command, a config snippet, an exact error message.
 - A light touch of emoji is fine to keep tone friendly (e.g. ✅ for a completed step,
   ⚠️ for a warning, 🔧 for a fix) — don't overuse them.
-- Use Emoji for the documentation title example (e.g.🚀 Title) and headings.
 """
 
 
