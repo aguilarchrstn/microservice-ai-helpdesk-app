@@ -145,7 +145,7 @@ docker compose logs -f frontend
 **Port already in use**
 Something else on the server is already bound to 8080 or 8000 — either stop
 it, or change the left-hand side of the `ports:` mapping in
-`docker-compose.yaml` (e.g. `"8081:80"`).
+`docker-compose.yaml` (e.g. `"8081:8080"`).
 
 ## API reference
 
