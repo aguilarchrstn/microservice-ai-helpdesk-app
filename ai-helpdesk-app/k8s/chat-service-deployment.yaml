@@ -11,19 +11,11 @@ spec:
     metadata:
       labels:
         io.kompose.service: chat-service
-        io.kompose.network/ai-helpdesk-app-default: "true"
     spec:
       containers:
         - name: chat-service
           image: ai-helpdesk-chat:latest
-          imagePullPolicy: IfNotPresent      # <-- INSIDE CONTAINERS
+          imagePullPolicy: IfNotPresent     # <-- Move here
           ports:
             - containerPort: 8000
-          env:
-            - name: AI_BASE_URL
-              value: "https://integrate.api.nvidia.com/v1"
-            - name: AI_MODEL
-              value: "nvidia/nemotron-3-ultra-550b-a55b"
-            - name: CORS_ORIGINS
-              value: "*"
-      restartPolicy: Always                  # <-- MUST BE Always
+      restartPolicy: Always                 # <-- Set to Always
