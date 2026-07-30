@@ -36,4 +36,4 @@ spec:
             - containerPort: 8000
               hostPort: 8000
               protocol: TCP
-      restartPolicy: Always
+      restartPolicy: IfNotPresent
