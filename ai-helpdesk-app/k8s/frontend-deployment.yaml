@@ -6,6 +6,11 @@ metadata:
     io.kompose.service: frontend
 spec:
   replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 100%               # <-- Forces immediate replacement of hanging pods
   selector:
     matchLabels:
       io.kompose.service: frontend
@@ -14,7 +19,7 @@ spec:
       labels:
         io.kompose.service: frontend
     spec:
-      terminationGracePeriodSeconds: 5
+      terminationGracePeriodSeconds: 2    # <-- Drop grace period to 2 seconds
       containers:
         - name: frontend
           image: ai-helpdesk-frontend:latest
