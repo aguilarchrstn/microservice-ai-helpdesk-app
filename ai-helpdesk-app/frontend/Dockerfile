@@ -19,3 +19,9 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 USER 101
 EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=3s CMD wget -qO- http://localhost:8080/ || exit 1
+# Add dumb-init or tini to handle SIGTERM signals properly
+RUN apk add --no-cache dumb-init
+
+# Use dumb-init as entrypoint
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+CMD ["npm", "start"]
