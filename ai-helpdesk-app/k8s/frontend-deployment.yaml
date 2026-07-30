@@ -19,3 +19,11 @@ spec:
           ports:
             - containerPort: 8080
       restartPolicy: Always                 # <-- Set to Always
+spec:
+  replicas: 1
+  template:
+    spec:
+      terminationGracePeriodSeconds: 5
+      containers:
+        - name: frontend
+          image: ai-helpdesk-frontend:latest
