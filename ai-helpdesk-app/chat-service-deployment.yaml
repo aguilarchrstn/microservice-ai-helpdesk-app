@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.32.0 (765fde254)
+  labels:
+    io.kompose.service: chat-service
+  name: chat-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: chat-service
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.32.0 (765fde254)
+      labels:
+        io.kompose.network/ai-helpdesk-app-default: "true"
+        io.kompose.service: chat-service
+    spec:
+      containers:
+        - env:
+            - name: AI_API_KEY
+            - name: AI_BASE_URL
+              value: https://integrate.api.nvidia.com/v1
+            - name: AI_MODEL
+              value: nvidia/nemotron-3-ultra-550b-a55b
+            - name: CORS_ORIGINS
+              value: '*'
+          image: chat-service
+          name: chat-service
+          ports:
+            - containerPort: 8000
+              hostPort: 8000
+              protocol: TCP
+      restartPolicy: Always
