@@ -1,16 +1,23 @@
-apiVersion: v1
-kind: Service
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  annotations:
-    kompose.cmd: kompose convert
-    kompose.version: 1.32.0 (765fde254)
-  labels:
-    io.kompose.service: chat-service
-  name: chat-service
+  name: chat-service-deployment
 spec:
-  ports:
-    - name: "8000"
-      port: 8000
-      targetPort: 8000
+  replicas: 1
   selector:
-    io.kompose.service: chat-service
+    matchLabels:
+      app: chat-service
+  template:
+    metadata:
+      labels:
+        app: chat-service
+    spec:
+      containers:
+        - name: chat-service
+          image: ai-helpdesk-chat:latest
+          ports:
+            - containerPort: 5000
+          # Inject AI_API_KEY, AI_BASE_URL, and AI_MODEL into the container environment
+          envFrom:
+            - secretRef:
+                name: ai-helpdesk-secret
