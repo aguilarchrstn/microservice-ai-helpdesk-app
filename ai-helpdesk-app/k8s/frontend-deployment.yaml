@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend
+  labels:
+    io.kompose.service: frontend
 spec:
   replicas: 1
   selector:
@@ -12,18 +14,10 @@ spec:
       labels:
         io.kompose.service: frontend
     spec:
-      containers:
-        - name: frontend
-          image: ai-helpdesk-frontend:latest
-          imagePullPolicy: IfNotPresent     # <-- Move here
-          ports:
-            - containerPort: 8080
-      restartPolicy: Always                 # <-- Set to Always
-spec:
-  replicas: 1
-  template:
-    spec:
       terminationGracePeriodSeconds: 5
       containers:
         - name: frontend
           image: ai-helpdesk-frontend:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
