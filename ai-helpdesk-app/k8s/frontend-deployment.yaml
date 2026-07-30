@@ -11,12 +11,11 @@ spec:
     metadata:
       labels:
         io.kompose.service: frontend
-        io.kompose.network/ai-helpdesk-app-default: "true"
     spec:
       containers:
         - name: frontend
           image: ai-helpdesk-frontend:latest
-          imagePullPolicy: IfNotPresent      # <-- INSIDE CONTAINERS
+          imagePullPolicy: IfNotPresent     # <-- Move here
           ports:
             - containerPort: 8080
-      restartPolicy: Always                  # <-- MUST BE Always
+      restartPolicy: Always                 # <-- Set to Always
