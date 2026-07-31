@@ -10,7 +10,7 @@ spec:
     type: RollingUpdate
     rollingUpdate:
       maxSurge: 1
-      maxUnavailable: 100%               # <-- Forces immediate replacement of hanging pods
+      maxUnavailable: 100%
   selector:
     matchLabels:
       io.kompose.service: frontend
@@ -19,10 +19,13 @@ spec:
       labels:
         io.kompose.service: frontend
     spec:
-      terminationGracePeriodSeconds: 2    # <-- Drop grace period to 2 seconds
+      terminationGracePeriodSeconds: 5
       containers:
         - name: frontend
           image: ai-helpdesk-frontend:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
+          envFrom:
+            - secretRef:
+                name: ai-helpdesk-secret
