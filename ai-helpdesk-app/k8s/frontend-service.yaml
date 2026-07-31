@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: frontend
+  name: frontend  # <-- Make sure this is "frontend", NOT "frontend-service"
   labels:
     io.kompose.service: frontend
 spec:
@@ -10,5 +10,6 @@ spec:
     - name: "8080"
       port: 8080
       targetPort: 8080
+      nodePort: 30080
   selector:
     io.kompose.service: frontend
