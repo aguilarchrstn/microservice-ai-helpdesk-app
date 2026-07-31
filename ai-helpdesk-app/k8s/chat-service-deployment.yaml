@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: chat-service
+  labels:
+    io.kompose.service: chat-service
 spec:
   replicas: 1
   selector:
@@ -12,10 +14,13 @@ spec:
       labels:
         io.kompose.service: chat-service
     spec:
+      terminationGracePeriodSeconds: 5
       containers:
         - name: chat-service
           image: ai-helpdesk-chat:latest
-          imagePullPolicy: IfNotPresent     # <-- Move here
+          imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 8000
-      restartPolicy: Always                 # <-- Set to Always
+            - containerPort: 5000
+          envFrom:
+            - secretRef:
+                name: ai-helpdesk-secret
