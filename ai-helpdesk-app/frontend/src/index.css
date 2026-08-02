@@ -324,8 +324,8 @@ html, body, #root {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 16px 0;
-  gap: 24px;
+  padding: 10px 0;
+  gap: 8px;
   z-index: 10;
   transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
@@ -409,8 +409,8 @@ html, body, #root {
 
 .sidebar__item {
   position: relative;
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
   border: none;
   background: transparent;
   color: var(--text-sub);
@@ -421,11 +421,12 @@ html, body, #root {
   cursor: pointer;
   transition: all 0.2s ease;
   align-self: center;
+  touch-action: manipulation;
 }
 
 .sidebar--expanded .sidebar__item {
   width: 100%;
-  height: 40px;
+  height: 44px;
   align-self: stretch;
   justify-content: flex-start;
   padding: 0 12px;
@@ -435,6 +436,10 @@ html, body, #root {
 .sidebar__item:hover {
   background: var(--bg-card-hover);
   color: var(--text-main);
+}
+
+.sidebar__item:active {
+  transform: scale(0.95);
 }
 
 .sidebar__item--active {
@@ -592,8 +597,10 @@ html, body, #root {
   color: var(--text-main);
   cursor: pointer;
   padding: 5px 10px;
+  min-height: 36px;
   border-radius: var(--radius-pill);
   transition: background 0.2s, border-color 0.2s;
+  touch-action: manipulation;
 }
 
 .topbar__profile:hover {
@@ -675,13 +682,14 @@ html, body, #root {
 
 .hero__copy h1 {
   font-family: var(--font-heading);
-  font-size: 28px;
+  font-size: clamp(20px, 6vw, 28px);
   font-weight: 700;
-  margin: 4px 0;
+  margin: 4px 0 8px;
   letter-spacing: -0.02em;
   background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  line-height: 1.2;
 }
 
 .hero__copy p {
@@ -706,22 +714,28 @@ html, body, #root {
   text-align: left;
   border: 1px solid var(--border-glass);
   border-radius: var(--radius-lg);
-  padding: 16px;
+  padding: 14px 16px;
   background: var(--bg-panel);
   backdrop-filter: blur(10px);
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
+  min-height: 120px;
   transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
   position: relative;
   overflow: hidden;
+  touch-action: manipulation;
 }
 
 .suggestion:hover {
   transform: translateY(-3px);
   border-color: var(--border-accent);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3), var(--shadow-glow);
+}
+
+.suggestion:active {
+  transform: translateY(-1px);
 }
 
 .suggestion__top {
@@ -796,18 +810,24 @@ html, body, #root {
   border: 1px solid var(--border-glass);
   background: var(--bg-card);
   color: var(--text-sub);
-  padding: 6px 14px;
+  padding: 8px 14px;
+  min-height: 36px;
   border-radius: var(--radius-pill);
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
+  touch-action: manipulation;
 }
 
 .chip-btn:hover {
   background: var(--accent-soft);
   color: var(--accent-primary);
   border-color: var(--border-accent);
+}
+
+.chip-btn:active {
+  transform: scale(0.97);
 }
 
 /* --- Conversation Log --- */
@@ -826,12 +846,14 @@ html, body, #root {
 
 .bubble {
   max-width: min(92%, 720px);
-  padding: 14px 18px;
+  padding: 12px 14px;
   border-radius: var(--radius-lg);
   font-size: 14px;
   line-height: 1.6;
   position: relative;
   animation: fade-in 0.25s ease-out;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 @keyframes fade-in {
@@ -1176,13 +1198,16 @@ html, body, #root {
 .composer__btn {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   border: 1px solid var(--border-glass);
   background: var(--bg-card);
   color: var(--text-sub);
   font-size: 12px;
   border-radius: var(--radius-pill);
-  padding: 6px 12px;
+  padding: 8px 12px;
+  min-height: 36px;
+  min-width: 36px;
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
@@ -1195,9 +1220,15 @@ html, body, #root {
   border-color: var(--border-glass-hover);
 }
 
+.composer__btn:active {
+  transform: scale(0.95);
+}
+
 .composer__send {
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
   border-radius: 50%;
   border: none;
   background: var(--accent-gradient);
@@ -1209,10 +1240,15 @@ html, body, #root {
   flex-shrink: 0;
   box-shadow: var(--shadow-glow);
   transition: transform 0.2s ease, opacity 0.2s ease;
+  touch-action: manipulation;
 }
 
 .composer__send:hover:not(:disabled) {
   transform: scale(1.05);
+}
+
+.composer__send:active:not(:disabled) {
+  transform: scale(0.95);
 }
 
 .composer__send:disabled {
@@ -1461,7 +1497,13 @@ html, body, #root {
 
 @media (max-width: 580px) {
   .topbar {
-    padding: 10px 14px;
+    padding: 10px 12px;
+  }
+  .topbar__left {
+    gap: 8px;
+  }
+  .topbar__title {
+    font-size: 15px;
   }
   .topbar__model-badge {
     display: none;
@@ -1473,71 +1515,144 @@ html, body, #root {
     display: none;
   }
   .topbar__profile {
-    padding: 5px 8px;
+    padding: 4px 8px;
+    font-size: 11px;
+    min-height: 32px;
+  }
+  .topbar__avatar {
+    width: 22px;
+    height: 22px;
+    font-size: 10px;
   }
   .hero {
-    padding: 14px 14px 18px;
+    padding: 12px 12px 20px;
   }
   .hero__copy {
-    margin-top: clamp(24px, 4vh, 40px);
+    margin-top: clamp(16px, 3vh, 32px);
   }
-  .hero__copy h1 {
-    font-size: 22px;
+  .suggestions {
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .suggestion {
+    padding: 12px 14px;
+  }
+  .hero__chips-label {
+    margin-top: 16px;
+    margin-bottom: 8px;
+    font-size: 10px;
+  }
+  .hero__chips {
+    gap: 6px;
   }
   .log {
-    padding: 16px 14px 24px;
+    padding: 12px 12px 20px;
+    gap: 14px;
   }
   .bubble {
     max-width: 100%;
+    padding: 10px 12px;
+  }
+  .bubble__header {
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+  .bubble__avatar {
+    width: 18px;
+    height: 18px;
+    font-size: 9px;
+  }
+  .bubble__label {
+    font-size: 10px;
+  }
+  .bubble__text {
+    font-size: 13px;
+  }
+  .bubble__action {
+    font-size: 10px;
+    padding: 3px 6px;
+    min-height: 28px;
   }
   .composer-wrapper {
-    width: calc(100% - 20px);
-    margin-bottom: 8px;
+    width: calc(100% - 18px);
+    margin-bottom: 6px;
+    max-width: none;
   }
   .composer {
-    padding: 8px 10px 8px 12px;
-    gap: 8px;
+    padding: 6px 8px 6px 10px;
+    gap: 6px;
+    border-radius: 20px;
   }
   .composer__icon {
     display: none;
   }
   .composer input {
     font-size: 14px;
+    padding: 2px 0;
+  }
+  .composer input::placeholder {
+    font-size: 13px;
   }
   .composer__btn {
-    font-size: 11px;
-    padding: 6px 9px;
+    font-size: 10px;
+    padding: 6px 10px;
+    min-height: 34px;
+    min-width: 34px;
   }
   .composer__btn span {
     display: none;
   }
   .composer__send {
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    min-height: 38px;
+  }
+  .composer__send svg {
+    width: 16px;
+    height: 16px;
   }
   .attach-menu {
-    left: 0;
-    right: 0;
-    bottom: calc(100% + 8px);
+    left: 6px;
+    right: 6px;
+    bottom: calc(100% + 6px);
     min-width: auto;
   }
   .toast {
-    bottom: 92px;
-    width: calc(100% - 24px);
+    bottom: 88px;
+    left: 12px;
+    right: 12px;
+    width: auto;
     justify-content: center;
     text-align: center;
+    font-size: 12px;
   }
 }
 
 @media (max-width: 360px) {
-  .topbar__title {
-    font-size: 14px;
+  .topbar {
+    padding: 8px 8px;
   }
-  .hero__copy h1 {
-    font-size: 20px;
+  .topbar__title {
+    font-size: 13px;
+  }
+  .topbar__avatar {
+    width: 20px;
+    height: 20px;
+    font-size: 9px;
+  }
+  .suggestions {
+    grid-template-columns: 1fr;
+  }
+  .suggestion {
+    min-height: 100px;
   }
   .chip-btn {
     font-size: 11px;
     padding: 6px 10px;
+    min-height: 32px;
+  }
+  .bubble {
+    max-width: 100%;
   }
 }
