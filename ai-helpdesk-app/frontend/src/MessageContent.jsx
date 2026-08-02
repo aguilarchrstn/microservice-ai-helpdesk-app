@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Copy, Check } from "lucide-react";
+import { Copy, Check, Terminal } from "lucide-react";
 import { copyText } from "./clipboard.js";
 
 function CodeBlock({ code, language }) {
@@ -16,10 +16,18 @@ function CodeBlock({ code, language }) {
   return (
     <div className="code-block">
       <div className="code-block__header">
-        <span>{language || "code"}</span>
+        <div className="code-block__dots">
+          <span className="dot dot--red" />
+          <span className="dot dot--yellow" />
+          <span className="dot dot--green" />
+          <span className="code-block__lang">
+            <Terminal size={11} />
+            {language || "bash"}
+          </span>
+        </div>
         <button type="button" className="code-block__copy" onClick={handleCopy}>
           {copied ? <Check size={12} /> : <Copy size={12} />}
-          {copied ? "Copied" : "Copy"}
+          <span>{copied ? "Copied" : "Copy code"}</span>
         </button>
       </div>
       <pre>
@@ -60,20 +68,27 @@ function renderTextChunk(chunk, keyPrefix) {
   const lines = chunk.split("\n");
   const nodes = [];
   let listBuffer = [];
+  let numListBuffer = [];
 
-  function flushList() {
+  function flushLists() {
     if (listBuffer.length > 0) {
-      nodes.push(<ul className="msg-list" key={`${keyPrefix}-list-${nodes.length}`}>{listBuffer}</ul>);
+      nodes.push(<ul className="msg-list" key={`${keyPrefix}-ul-${nodes.length}`}>{listBuffer}</ul>);
       listBuffer = [];
+    }
+    if (numListBuffer.length > 0) {
+      nodes.push(<ol className="msg-num-list" key={`${keyPrefix}-ol-${nodes.length}`}>{numListBuffer}</ol>);
+      numListBuffer = [];
     }
   }
 
   lines.forEach((line, i) => {
     const headingMatch = line.match(/^(#{1,4})\s+(.*)/);
-    const listMatch = line.match(/^[-*]\s+(.*)/);
+    const bulletMatch = line.match(/^[-*]\s+(.*)/);
+    const numMatch = line.match(/^(\d+)\.\s+(.*)/);
+    const quoteMatch = line.match(/^>\s+(.*)/);
 
     if (headingMatch) {
-      flushList();
+      flushLists();
       const level = headingMatch[1].length;
       const Tag = level <= 2 ? "h3" : "h4";
       nodes.push(
@@ -81,12 +96,25 @@ function renderTextChunk(chunk, keyPrefix) {
           {renderInline(headingMatch[2], `${keyPrefix}-h-${i}`)}
         </Tag>
       );
-    } else if (listMatch) {
+    } else if (bulletMatch) {
+      if (numListBuffer.length > 0) flushLists();
       listBuffer.push(
-        <li key={`${keyPrefix}-li-${i}`}>{renderInline(listMatch[1], `${keyPrefix}-li-${i}`)}</li>
+        <li key={`${keyPrefix}-li-${i}`}>{renderInline(bulletMatch[1], `${keyPrefix}-li-${i}`)}</li>
+      );
+    } else if (numMatch) {
+      if (listBuffer.length > 0) flushLists();
+      numListBuffer.push(
+        <li key={`${keyPrefix}-nli-${i}`}>{renderInline(numMatch[2], `${keyPrefix}-nli-${i}`)}</li>
+      );
+    } else if (quoteMatch) {
+      flushLists();
+      nodes.push(
+        <blockquote className="msg-quote" key={`${keyPrefix}-q-${i}`}>
+          {renderInline(quoteMatch[1], `${keyPrefix}-q-${i}`)}
+        </blockquote>
       );
     } else {
-      flushList();
+      flushLists();
       if (line.trim() === "") {
         nodes.push(<div className="msg-spacer" key={`${keyPrefix}-sp-${i}`} />);
       } else {
@@ -99,16 +127,15 @@ function renderTextChunk(chunk, keyPrefix) {
     }
   });
 
-  flushList();
+  flushLists();
   return nodes;
 }
 
 const CODE_BLOCK_PATTERN = /```(\w*)\n?([\s\S]*?)```/g;
 
 /**
- * Renders assistant message text with light markdown support:
- * **bold**, *italic*, `inline code`, and ```fenced code blocks``` (with a
- * copy button). Everything else renders as plain text, line breaks intact.
+ * Renders assistant message text with enhanced markdown support:
+ * **bold**, *italic*, `inline code`, bullet & numbered lists, blockquotes, and ```fenced code blocks```.
  */
 export function renderMessageContent(text) {
   const nodes = [];
@@ -134,3 +161,4 @@ export function renderMessageContent(text) {
 
   return nodes;
 }
+
