@@ -92,6 +92,7 @@ html, body, #root {
   margin: 0;
   padding: 0;
   overflow: hidden;
+  overflow-x: hidden;
   overscroll-behavior: none;
   background-color: var(--bg-dark);
   color: var(--text-main);
@@ -102,6 +103,10 @@ html, body, #root {
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Custom Scrollbar */
@@ -122,7 +127,7 @@ html, body, #root {
 
 /* --- Main Layout Container --- */
 .app {
-  width: 100vw;
+  width: 100%;
   max-width: 100vw;
   height: 100%;
   min-height: 100%;
@@ -134,7 +139,10 @@ html, body, #root {
     radial-gradient(ellipse 60% 60% at 85% 90%, rgba(168, 85, 247, 0.08), transparent);
   display: flex;
   overflow: hidden;
+  overflow-x: hidden;
   position: relative;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 /* --- Splash Screen --- */
@@ -637,6 +645,8 @@ html, body, #root {
   padding-bottom: calc(24px + env(safe-area-inset-bottom));
   position: relative;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
   min-height: 0;
 }
 
@@ -834,6 +844,7 @@ html, body, #root {
 .log {
   flex: 1;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   padding: 24px 32px 24px;
   padding-bottom: calc(24px + env(safe-area-inset-bottom));
   display: flex;
@@ -842,6 +853,7 @@ html, body, #root {
   max-width: 860px;
   width: 100%;
   margin: 0 auto;
+  scroll-behavior: smooth;
 }
 
 .bubble {
@@ -1181,6 +1193,12 @@ html, body, #root {
   font-size: 14.5px;
   font-family: inherit;
   outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  padding: 4px 0;
+  max-width: 100%;
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 .composer input::placeholder {
@@ -1367,6 +1385,8 @@ html, body, #root {
 .drawer__content {
   flex: 1;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
   padding: 24px;
   display: flex;
   flex-direction: column;
@@ -1654,5 +1674,34 @@ html, body, #root {
   }
   .bubble {
     max-width: 100%;
+  }
+}
+
+/* Mobile browser specific optimizations */
+@supports (padding: max(0px)) {
+  html, body, #root {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+  }
+  .composer-wrapper {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+  }
+}
+
+/* iOS specific fixes */
+@supports (-webkit-touch-callout: none) {
+  body {
+    -webkit-user-select: none;
+    -webkit-user-select: none;
+    -webkit-user-select: none;
+  }
+  input, textarea {
+    -webkit-user-select: text;
+    user-select: text;
+    font-size: 16px;
+  }
+  .composer input {
+    font-size: 16px;
   }
 }
