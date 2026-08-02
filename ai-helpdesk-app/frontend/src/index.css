@@ -91,6 +91,7 @@ html, body, #root {
   min-height: 100dvh;
   margin: 0;
   padding: 0;
+  /* overflow: hidden ensures the app layout doesn't scroll beyond viewport on mobile */
   overflow: hidden;
   overflow-x: hidden;
   overscroll-behavior: none;
@@ -103,10 +104,11 @@ html, body, #root {
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
-  -webkit-user-select: none;
-  user-select: none;
-  -webkit-touch-callout: none;
-  -webkit-tap-highlight-color: transparent;
+  /* Allow text selection by default for accessibility */
+  -webkit-user-select: text;
+  user-select: text;
+  -webkit-touch-callout: default;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Custom Scrollbar */
@@ -141,8 +143,6 @@ html, body, #root {
   overflow: hidden;
   overflow-x: hidden;
   position: relative;
-  -webkit-user-select: none;
-  user-select: none;
 }
 
 /* --- Splash Screen --- */
@@ -430,6 +430,9 @@ html, body, #root {
   transition: all 0.2s ease;
   align-self: center;
   touch-action: manipulation;
+  /* Prevent text selection on UI buttons */
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .sidebar--expanded .sidebar__item {
@@ -609,6 +612,9 @@ html, body, #root {
   border-radius: var(--radius-pill);
   transition: background 0.2s, border-color 0.2s;
   touch-action: manipulation;
+  /* Prevent text selection on interactive buttons */
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .topbar__profile:hover {
@@ -736,6 +742,9 @@ html, body, #root {
   position: relative;
   overflow: hidden;
   touch-action: manipulation;
+  /* Prevent text selection on interactive cards */
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .suggestion:hover {
@@ -866,6 +875,9 @@ html, body, #root {
   animation: fade-in 0.25s ease-out;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  /* Allow text selection on message content for accessibility */
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 @keyframes fade-in {
@@ -1230,6 +1242,9 @@ html, body, #root {
   transition: all 0.2s ease;
   white-space: nowrap;
   touch-action: manipulation;
+  /* Prevent text selection on interactive buttons */
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .composer__btn:hover {
